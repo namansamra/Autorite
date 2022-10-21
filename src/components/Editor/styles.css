@@ -1,0 +1,185 @@
+:root {
+  --editor-padding: 4%;
+}
+
+.quill {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+
+#editor-bound {
+  display: flex;
+}
+
+.ql-container {
+  font-family: serif;
+  font-size: 16px;
+  color: #29394a;
+}
+.ql-container.ql-snow {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  transition: padding 0.5s ease-in-out;
+}
+.ql-editor {
+  overflow: auto;
+  flex-grow: 1;
+  height: 40vh;
+  word-break: break-word;
+  padding: 20px;
+}
+
+.ql-progress {
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.hide {
+  display: none !important;
+}
+
+.ql-picker-options {
+  z-index: 2 !important;
+}
+
+.ql-toolbar hr {
+  border: solid 0.1px #ededff;
+  border-bottom: none;
+}
+
+/* Set dropdown font-families */
+
+.ql-font span[data-label='Inter']::before {
+  font-family: 'Inter';
+}
+.ql-font span[data-label='Roboto']::before {
+  font-family: 'Roboto';
+}
+
+/* Set content font-families */
+.ql-font-mirza {
+  font-family: 'Inter';
+}
+.ql-font-roboto {
+  font-family: 'Roboto';
+}
+
+.ql-saving {
+  position: absolute;
+  right: 20px;
+  bottom: 16px;
+  z-index: 22;
+  width: 60px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--primary-blue);
+}
+
+.ql-saved {
+  position: absolute;
+  right: 10px;
+  bottom: 16px;
+  z-index: 22;
+  width: 175px;
+  font-size: 10px;
+  font-weight: 500;
+  align-items: center;
+  justify-content: flex-end;
+  display: flex;
+  gap: 3px;
+  color: #ababab;
+  font-family: Inter;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.ql-saved:hover {
+  color: #29394a;
+}
+
+.ql-write {
+  position: absolute;
+  right: 90px;
+  top: 12px;
+  z-index: 22;
+  width: 40px;
+  font-size: 12px;
+  font-weight: 500;
+  color: lightseagreen;
+}
+
+.ql-toolbar {
+  position: relative;
+}
+.ql-toolbar button {
+  width: unset !important;
+}
+
+.ql-font-poppins {
+  font-family: poppins;
+}
+
+.ql-font-open-sans {
+  font-family: open sans;
+}
+
+.ql-font-noto-sans {
+  font-family: noto sans;
+}
+
+.ql-font-inter {
+  font-family: inter;
+}
+.ql-font-gluten {
+  font-family: gluten, cursive;
+}
+
+.ql-font-poppins {
+  font-family: poppins;
+}
+
+.ql-font-fleur-de-leah {
+  font-family: fleur de leah, cursive;
+}
+
+.ql-font-sans-serif {
+  font-family: sans-serif;
+}
+
+.ql-font-roboto {
+  font-family: roboto;
+}
+
+.ql-toolbar.ql-snow {
+  border: none;
+  padding: 0px;
+  font-family: Inter;
+  background-color: white;
+  transition: padding 0.5s ease-in-out;
+  z-index: 10;
+}
+.ql-toolbar {
+  padding: 10px !important;
+  position: sticky;
+}
+.ql-snow .ql-picker-label {
+  padding-left: 0;
+}
+.ql-editor {
+  padding: 20px;
+  font-size: 16px;
+  font-family: Inter;
+  background-color: #fafafa;
+  border: 1px solid #ababab;
+  height: 75vh;
+}
+
+.ql-toolbar .ql-snow .ql-formats {
+  margin-right: 10px;
+}

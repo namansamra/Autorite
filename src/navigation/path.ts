@@ -1,0 +1,12 @@
+export const Login = '/login';
+export const SignUp = '/signup';
+export const Home = '/home';
+export const Dashboard = '/dashboard';
+export const Pricing = '/pricing';
+export const MyAccount = '/myaccount';
+export const Setting = '/settings';
+export const CreateSimple = '/create-simple';
+export const CreateAdvanced = '/create-advanced';
+export const CreateBulk = '/creat-bulk';
+export const CreateImage = '/create-image';
+export const DetailedArticle = '/dashboard/:id';
