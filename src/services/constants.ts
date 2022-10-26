@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'http://65.0.202.147/api/';
+export const API_BASE_URL = 'https://api.autorite.me/api/';
 export const USER_SIGNUP = 'auth/register';
 export const USER_LOGIN = 'auth/login';
 export const USER_LOGOUT = 'auth/logout';

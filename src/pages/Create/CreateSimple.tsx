@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Formik, Field, Form, ErrorMessage, useFormik } from 'formik';
-import { Button, Input } from '@chakra-ui/react';
+import { Button, Input, Progress } from '@chakra-ui/react';
 import { AiOutlineFileAdd } from 'react-icons/ai';
 import { createArticleFormSchema } from '@/utils/validationSchema';
 import { createArticle, getLocations } from '@/services/common';
@@ -143,15 +143,30 @@ function CreateSimple() {
                     }}
                   </Field>
                 </div>
-                <Button
-                  className="h-[44px] w-[180px] py-3 bg-primary-500 text-white mt-6 text-md"
-                  isLoading={props.isSubmitting}
-                  type="submit"
-                  leftIcon={<AiOutlineFileAdd />}
-                  variant="primary"
-                >
-                  Create Article
-                </Button>
+                {props.isSubmitting ? (
+                  <Progress
+                    value={60}
+                    className="mt-10"
+                    animation={'ease-in-out'}
+                    isIndeterminate
+                    sx={{
+                      div: {
+                        background:
+                          'linear-gradient(to right, transparent 0%,#57d3c7 50%, transparent 100%)',
+                      },
+                    }}
+                  />
+                ) : (
+                  <Button
+                    className="h-[44px] w-[180px] py-3 bg-primary-500 text-white mt-6 text-md"
+                    isLoading={props.isSubmitting}
+                    type="submit"
+                    leftIcon={<AiOutlineFileAdd />}
+                    variant="primary"
+                  >
+                    Create Article
+                  </Button>
+                )}
               </Form>
             )}
           </Formik>
