@@ -17,6 +17,7 @@ import {
   SignUp,
 } from '@/navigation/path';
 import { FiPhoneCall } from 'react-icons/fi';
+import { userLogout } from '@/services/common';
 
 export const sideBarLinks = [
   {
@@ -48,17 +49,23 @@ export const sideBarLinks = [
 export const drawerWidth = 200;
 function Sidebar() {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [authToken, userInfo, resetStore] = useGlobalStore((state) => [
-    state.appState.auth.authToken,
+  const [userInfo, resetStore, refreshToken] = useGlobalStore((state) => [
     state.appState.userInfo,
     state.actions.resetStore,
+    state.appState.auth.refresh.token,
   ]);
   const history = useHistory();
 
-  const handleLogout = () => {
-    resetStore();
-    localStorage.clear();
-    history.push('/login');
+  const handleLogout = async () => {
+    try {
+      await userLogout({ refreshToken });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      resetStore();
+      localStorage.clear();
+      history.push('/login');
+    }
   };
 
   return (

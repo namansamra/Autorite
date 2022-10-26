@@ -1,9 +1,12 @@
 export const API_BASE_URL = 'http://65.0.202.147/api/';
 export const USER_SIGNUP = 'auth/register';
 export const USER_LOGIN = 'auth/login';
+export const USER_LOGOUT = 'auth/logout';
 export const CREATE_ARTICLE = 'article/create';
 export const GET_ALL_ARTICLES = 'article/all';
 export const GET_DETAILED_ARTICLE = 'article/';
 export const GET_LOCATIONS = 'locations';
 export const CONNECT_WORDPRESS = 'wordpress/connect';
 export const GET_WORDPRESS_INFO = 'wordpress/details';
+export const USER_VERIFY = 'auth/verify-email';
+export const SEND_VERIFICATION_EMAIL = 'auth/send-verification-email';

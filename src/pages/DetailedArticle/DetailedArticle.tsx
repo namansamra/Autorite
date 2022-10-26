@@ -1,11 +1,12 @@
 import QuillEditor from '@/components/Editor/Quill';
 import { getDetailedArticle } from '@/services/common';
-import { Button } from '@chakra-ui/react';
+import { Button, useDisclosure } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { TbPlugConnected } from 'react-icons/tb';
 import parse from 'html-react-parser';
+import Publisher from './Publisher';
 
 function makeHtmlContent(data) {
   // let title  = `<h1> ${data.data.title? data.data.title :"" } </h1>`
@@ -63,7 +64,6 @@ function makeHtmlContent(data) {
       htmlContent += '<br/>';
     });
   }
-  console.log(htmlContent);
   return htmlContent;
 }
 
@@ -74,12 +74,11 @@ function DetailedArticle() {
   const [step, setStep] = useState(1);
   const [articleFormated, setArticleFormated] = useState('');
   const [value, setValue] = useState('');
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   useEffect(() => {
     const fun = async () => {
       setLoading(true);
       const res = await getDetailedArticle(id);
-      console.log(res);
       setArticleData(res.data.articleInfo);
       setLoading(false);
     };
@@ -96,7 +95,7 @@ function DetailedArticle() {
 
   const Article = () => {
     return (
-      <div className="w-full flex flex-col gap-2 p-4 border-2 ">
+      <div className="w-full h-full flex flex-col grow gap-2 border-2 overflow-y-scroll">
         <div className="flex flex-col gap-2 w-full bg-white shadow-md rounded-md p-8">
           {parse(articleFormated)}
         </div>
@@ -106,13 +105,18 @@ function DetailedArticle() {
 
   return (
     <div className="w-full  h-full bg-grey-200 text-grey-800 pr-4">
-      <div className="flex items-center gap-[20px] justify-between px-4 py-6 sticky top-0 bg-grey-200 z-10  shadow-md border-[#ababab]">
+      <div className="flex items-center gap-[20px] justify-between p-4 sticky top-0 bg-grey-200 z-10  shadow-md border-[#ababab]">
         <div className="flex flex-col gap-2">
           <h1 className="font-bold text-3xl">{articleData.keyword}</h1>
           <p className="text-sm">{articleData.location}</p>
         </div>
         <div className="flex items-center gap-4">
-          <Button rightIcon={<TbPlugConnected />} onClick={() => {}}>
+          <Button
+            rightIcon={<TbPlugConnected />}
+            onClick={() => {
+              onOpen();
+            }}
+          >
             Publish Article
           </Button>
           <Button
@@ -123,17 +127,20 @@ function DetailedArticle() {
           </Button>
         </div>
       </div>
-      {step == 1 ? (
-        <Article />
-      ) : (
-        <div className="w-full flex flex-col gap-2 p-4 border-2 ">
-          <QuillEditor
-            articleData={articleData}
-            value={value}
-            setValue={setValue}
-          />
-        </div>
-      )}
+      <div className="flex flex-row gap-5 p-4 h-[calc(100vh-6rem)]">
+        {step == 1 ? (
+          <Article />
+        ) : (
+          <div className="w-full flex flex-col gap-2 border-2 ">
+            <QuillEditor
+              articleData={articleData}
+              value={value}
+              setValue={setValue}
+            />
+          </div>
+        )}
+        <Publisher isOpen={isOpen} onClose={onClose} />
+      </div>
     </div>
   );
 }

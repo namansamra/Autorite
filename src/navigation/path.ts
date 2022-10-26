@@ -10,3 +10,4 @@ export const CreateAdvanced = '/create-advanced';
 export const CreateBulk = '/creat-bulk';
 export const CreateImage = '/create-image';
 export const DetailedArticle = '/dashboard/:id';
+export const EmailVerify = '/auth/verify-email';

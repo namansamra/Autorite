@@ -17,8 +17,10 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { wordPressConnectSchema } from '@/utils/validationSchema';
 import CustomFormError from '@/components/CustomFormError/CustomFormError';
 import { BsFillCheckCircleFill } from 'react-icons/bs';
-import { CgMenuRound } from 'react-icons/cg';
+import { CgMenuRound, CgProfile } from 'react-icons/cg';
+import { SiQuantconnect } from 'react-icons/si';
 import { connectWordpress } from '@/services/common';
+import CustomToast from '@/components/Toast/Toast';
 function MyAccount() {
   const userInfo = useGlobalStore((state) => state.appState.userInfo);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -28,8 +30,12 @@ function MyAccount() {
     try {
       await connectWordpress(values);
       setWordpressStatus('connected');
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      const { response } = error;
+      if (response.data) {
+        const { message } = response.data;
+        CustomToast({ title: message, status: 'error' });
+      }
     }
   };
 
@@ -42,10 +48,12 @@ function MyAccount() {
     {
       title: 'Profile',
       step: 0,
+      icon: () => <CgProfile className="text-md text-grey-500 mr-2" />,
     },
     {
       title: 'App Integration',
       step: 1,
+      icon: () => <SiQuantconnect className="text-md text-grey-500 mr-2" />,
     },
   ];
   return (
@@ -53,16 +61,16 @@ function MyAccount() {
       <div className="w-full h-full flex flex-col gap-5 p-4">
         <h1 className="font-bold text-3xl">User Info</h1>
         <div className="flex p-4 gap-10">
-          <div className="flex flex-col gap-2 w-[200px] h-max p-4 bg-white shadow-md rounded-lg">
+          <div className="flex flex-col gap-2 w-[300px] h-max p-4 bg-white shadow-md rounded-lg">
             {actions.map((action, i) => (
               <div
                 key={action.title}
-                className={`p-2.5 text-md font-semibold text-grey-600 cursor-pointer rounded-sm ${
+                className={` flex items-center p-2.5 text-md font-semibold text-grey-600 cursor-pointer rounded-sm ${
                   step == action.step ? 'bg-primary-50' : ''
                 }`}
                 onClick={() => setStep(action.step)}
               >
-                {action.title}
+                {action.icon()} {action.title}
               </div>
             ))}
           </div>
@@ -89,7 +97,7 @@ function MyAccount() {
               </div>
             ) : (
               <div className="flex gap-5 justify-center">
-                <div className="flex flex-col bg-white items-center w-[300px] shadow-xl p-5  my-5 gap-4 rounded-md">
+                <div className="flex flex-col items-center w-[300px] shadow-xl p-5 py-8 my-5 gap-4 rounded-md bg-grey-100">
                   <BsWordpress className="h-[200px] w-[200px] text-grey-400" />
                   <Button
                     variant={'primary'}
@@ -192,7 +200,7 @@ function MyAccount() {
                     </ModalContent>
                   </Modal>
                 </div>
-                <div className="flex flex-col bg-white items-center w-[300px] shadow-lg p-5  my-5 gap-4 rounded-md">
+                {/* <div className="flex flex-col bg-white items-center w-[300px] shadow-lg p-5  my-5 gap-4 rounded-md">
                   <CgMenuRound className="h-[200px] w-[200px] text-grey-400" />
                   <Button
                     variant={'primary'}
@@ -202,7 +210,7 @@ function MyAccount() {
                   >
                     Comming Soon...
                   </Button>
-                </div>
+                </div> */}
               </div>
             )}
           </div>

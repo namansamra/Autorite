@@ -16,9 +16,10 @@ import { ImSad } from 'react-icons/im';
 import { ImStack } from 'react-icons/im';
 import { BsImageFill } from 'react-icons/bs';
 import { useHistory } from 'react-router-dom';
-import { getAllArticles } from '@/services/common';
+import { getAllArticles, getWordpressInfo } from '@/services/common';
 import TextShortner from '@/components/form/TextShotner';
 import CustomTable from '@/components/CustomTable/CustomTable';
+import { useGlobalStore } from '@/store/store';
 const buttons = [
   {
     id: 0,
@@ -116,6 +117,9 @@ function Dashboard() {
   const history = useHistory();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
+  const setWordPressInfo = useGlobalStore(
+    (state) => state.actions.setWordPressInfo
+  );
 
   useEffect(() => {
     const fun = async () => {
@@ -127,6 +131,21 @@ function Dashboard() {
 
     fun();
   }, []);
+
+  useEffect(() => {
+    const fun = async () => {
+      try {
+        const { data } = await getWordpressInfo();
+        setWordPressInfo(data.response);
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fun();
+  }, []);
+
   return (
     <div className="w-full  h-screen bg-grey-200 text-grey-800">
       <div className="w-full h-full flex flex-col gap-5 p-4 border-2 ">

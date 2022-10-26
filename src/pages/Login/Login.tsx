@@ -15,17 +15,25 @@ const CustomFormError = (msg) => {
 
 function Login() {
   const history = useHistory();
-  const [setUserInfo, setAuth] = useGlobalStore((state) => [
+  const [setUserInfo, setAuth, userInfo] = useGlobalStore((state) => [
     state.actions.setUserInfo,
     state.actions.setAuth,
+    state.appState.userInfo,
   ]);
+
+  console.log(userInfo);
 
   const handleLogin = async (formValues) => {
     try {
       const { data } = await userLogin(formValues);
       const { user, tokens } = data;
-      setUserInfo(user);
       setAuth(tokens);
+      if (user.isEmailVerified == 0) {
+        console.log(history);
+        history.push('/auth/verify-email');
+        return;
+      }
+      setUserInfo(user);
       history.push('/dashboard');
     } catch (error) {
       console.log(error);

@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  h1 {
+    font-size: 24px !important;
+    font-weight: 700 !important;
+  }
+  h2 {
+    font-size: 22px !important;
+    font-weight: 600 !important;
+  }
+  h3 {
+    font-size: 20px !important;
+    font-weight: 500 !important;
+  }
+  h4 {
+    font-size: 18px !important;
+    font-weight: 400 !important;
+  }
+}
+
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
 

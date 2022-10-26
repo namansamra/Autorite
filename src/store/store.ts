@@ -1,7 +1,8 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 import produce from 'immer';
-import { persist } from 'zustand/middleware';
+import { persist, PersistOptions } from 'zustand/middleware';
+import _ from 'lodash';
 
 interface IGlobalStore {
   appState: {
@@ -15,6 +16,7 @@ interface IGlobalStore {
     setUserInfo: (data: any) => void;
     setAuth: (data: any) => void;
     resetStore: () => void;
+    setWordPressInfo: (data: any) => void;
   };
 }
 const initialState = {
@@ -66,6 +68,8 @@ export const useGlobalStore = create<IGlobalStore>()(
       {
         name: 'zustand-store',
         version: 1,
+        merge: (persistedState, currentState) =>
+          _.merge(currentState, persistedState),
       }
     )
   )
