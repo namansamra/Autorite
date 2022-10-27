@@ -6,7 +6,6 @@ import Layout from '@/components/Layout/Layout';
 import { Route, Switch } from 'react-router-dom';
 function Navigation() {
   const userInfo = useGlobalStore((state) => state.appState.userInfo);
-  console.log(userInfo);
   if (!userInfo) {
     return (
       <Switch>
