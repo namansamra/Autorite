@@ -56,10 +56,20 @@ export const useGlobalStore = create<IGlobalStore>()(
               })
             );
           },
+          //we cannot refer initial state object here because zustand make changes in that to save state and it is then referenced to the current state
           resetStore() {
             set(
               produce((state: IGlobalStore) => {
-                state.appState = initialState;
+                state.appState = {
+                  auth: {
+                    isAuthorised: false,
+                    tokens: null,
+                  },
+                  dashboard: null,
+                  payment: null,
+                  userInfo: null,
+                  wordPressInfo: null,
+                };
               })
             );
           },

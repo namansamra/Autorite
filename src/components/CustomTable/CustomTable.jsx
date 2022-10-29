@@ -40,7 +40,7 @@ const IndeterminateCheckbox = forwardRef(function CheckBox(
   );
 });
 
-const CustomTable = ({ columns, tableRows, rowsPerPage = 6 }) => {
+const CustomTable = ({ columns, tableRows, rowsPerPage = 8 }) => {
   const history = useHistory();
   const getRowId = useCallback((row, relativeIndex, parent) => {
     const id = row.id;
@@ -73,25 +73,25 @@ const CustomTable = ({ columns, tableRows, rowsPerPage = 6 }) => {
     useRowSelect,
     (hooks) => {
       hooks.visibleColumns.push((columns) => [
-        {
-          id: 'selection',
-          Header: ({ getToggleAllPageRowsSelectedProps }) => {
-            return (
-              <Flex alignItems={'center'}>
-                <IndeterminateCheckbox
-                  {...getToggleAllPageRowsSelectedProps()}
-                />
-              </Flex>
-            );
-          },
-          Cell: ({ row }) => {
-            return (
-              <Flex alignItems={'center'}>
-                <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-              </Flex>
-            );
-          },
-        },
+        // {
+        //   id: 'selection',
+        //   Header: ({ getToggleAllPageRowsSelectedProps }) => {
+        //     return (
+        //       <Flex alignItems={'center'}>
+        //         <IndeterminateCheckbox
+        //           {...getToggleAllPageRowsSelectedProps()}
+        //         />
+        //       </Flex>
+        //     );
+        //   },
+        //   Cell: ({ row }) => {
+        //     return (
+        //       <Flex alignItems={'center'}>
+        //         <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+        //       </Flex>
+        //     );
+        //   },
+        // },
         ...columns,
       ]);
     }

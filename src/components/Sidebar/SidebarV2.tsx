@@ -62,6 +62,7 @@ function Sidebar() {
     } catch (error) {
       console.log(error);
     } finally {
+      console.log('hello');
       resetStore();
       localStorage.clear();
       history.push('/login');

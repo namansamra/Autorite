@@ -26,22 +26,22 @@ function makeHtmlContent(data) {
   if (data.headings_paragraph) {
     htmlContent += `<h1>Headings</h1>`;
     data.headings_paragraph.forEach((item) => {
-      htmlContent += `<h3>${item.heading}</h3>`;
+      htmlContent += `<h2>${item.heading}</h2>`;
       htmlContent += `<p>${item.paragraph}</p>`;
       htmlContent += '<br/>';
     });
   }
 
   if (data.conclusion_paragraph) {
-    htmlContent += `<h1>Conclusion</h1>`;
-    htmlContent += `<h3>${data.conclusion_paragraph}</h3>`;
+    htmlContent += `<h2>Conclusion</h2>`;
+    htmlContent += `<h4>${data.conclusion_paragraph}</h4>`;
     htmlContent += '<br/>';
   }
 
   if (data.quora_questions) {
     htmlContent += `<h1>Quora Questions</h1>`;
     data.quora_questions.forEach((item) => {
-      htmlContent += `<h4>${item.question}</h4>`;
+      htmlContent += `<h2>${item.question}</h2>`;
       htmlContent += `<p>${item.answer}</p>`;
       htmlContent += '<br/>';
     });
@@ -50,7 +50,7 @@ function makeHtmlContent(data) {
   if (data.ai_questions) {
     htmlContent += `<h1>AI Questions</h1>`;
     data.quora_questions.forEach((item) => {
-      htmlContent += `<h4>${item.question}</h4>`;
+      htmlContent += `<h2>${item.question}</h2>`;
       htmlContent += `<p>${item.answer}</p>`;
       htmlContent += '<br/>';
     });
@@ -59,7 +59,7 @@ function makeHtmlContent(data) {
   if (data.related_questions) {
     htmlContent += `<h1>Related Questions</h1>`;
     data.quora_questions.forEach((item) => {
-      htmlContent += `<h4>${item.question}</h4>`;
+      htmlContent += `<h2>${item.question}</h2>`;
       htmlContent += `<p>${item.answer}</p>`;
       htmlContent += '<br/>';
     });

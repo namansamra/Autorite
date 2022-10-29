@@ -51,7 +51,7 @@ function MyAccount() {
       icon: () => <CgProfile className="text-md text-grey-500 mr-2" />,
     },
     {
-      title: 'App Integration',
+      title: 'WordPress',
       step: 1,
       icon: () => <SiQuantconnect className="text-md text-grey-500 mr-2" />,
     },

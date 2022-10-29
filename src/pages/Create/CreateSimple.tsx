@@ -55,14 +55,14 @@ function CreateSimple() {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [isLoadingLocations, setIsLoadingLocations] = useState(false);
 
-  const fun = useCallback(async (value: string, callback: any) => {
+  const searchFunction = useCallback(async (value: string, callback: any) => {
     setIsLoadingLocations(true);
     const res = await getLocations(value);
     setIsLoadingLocations(false);
     callback(res.data.locations);
   }, []);
 
-  const handler = debounce(fun, 1000);
+  const handler = debounce(searchFunction, 1000);
   const submitHandler = async (values) => {
     let newValues = { ...values, location: selectedLocation };
     if (!selectedLocation) {
@@ -116,7 +116,11 @@ function CreateSimple() {
                                 return (
                                   <React.Fragment>
                                     <components.Option {...props}>
-                                      <div className="flex">
+                                      <div className="flex cursor-pointer">
+                                        <img
+                                          src={`https://flagcdn.com/w40/${props?.data?.country_code?.toLowerCase()}.png`}
+                                          className="h-[20px] w-[40px] mr-5"
+                                        />
                                         <div>{props.data.name}</div>
                                       </div>
                                     </components.Option>
@@ -133,7 +137,6 @@ function CreateSimple() {
                             }}
                             getOptionLabel={(option: any) => option.name}
                             onChange={(val: any) => {
-                              console.log(val);
                               setSelectedLocation(val.name);
                             }}
                             placeholder="Location specifity for your article"

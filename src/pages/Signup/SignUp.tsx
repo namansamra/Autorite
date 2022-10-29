@@ -30,10 +30,7 @@ const SignUp = () => {
       const { data } = await userSignUp(formData);
       const { tokens, user } = data;
       setAuth(tokens);
-      if (user.isEmailVerified == 0) {
-        console.log(history);
-        history.push('/auth/verify-email');
-      }
+      history.push('/auth/verify-email');
     } catch (error) {
       console.log(error);
     }
