@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import { ImageDrop } from 'quill-image-drop-module';
 import ImageResize from 'quill-image-resize-module-react';
@@ -138,12 +138,13 @@ let docu: any = document;
 
 function QuillEditor({
   access = true,
-  saveEditorData = () => {},
+  saveEditorData = (value: string) => {},
   getEditorData = () => {},
   articleData,
   htmlContent = '',
   value = '',
   setValue = (val: any) => {},
+  articleId = '',
 }) {
   const ref = useRef();
   const [loading, setLoading] = useState(true);
@@ -156,16 +157,17 @@ function QuillEditor({
         await getEditorData();
         setLoading(false);
         if (docu?.quill?.editor) {
-          access && docu.editor.enable();
+          access && docu.quill.editor.enable();
           docu.quill.editor.cursor = docu.quill.editor.getText().length;
           docu.quill.focus();
         }
       })();
     }
     return () => {
-      if (docu?.quill?.editor?.getText() != '\n') {
+      let currVal = docu?.quill?.editor?.root?.innerHTML;
+      if (currVal && (currVal != '\n' || currVal != '<br/>')) {
         docu.mounted = false;
-        saveEditorData();
+        saveEditorData(currVal);
       }
     };
   }, []);
@@ -180,9 +182,10 @@ function QuillEditor({
         id="editor-bound"
       >
         <ReactQuill
-          // ref={ref as React.MutableRefObject<any>}
+          ref={ref as React.MutableRefObject<any>}
           onChange={(value) => {
             setValue(value);
+            saveEditorData(value);
           }}
           theme={quill.theme}
           modules={quill.modules}

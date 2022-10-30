@@ -1,12 +1,13 @@
 import QuillEditor from '@/components/Editor/Quill';
-import { getDetailedArticle } from '@/services/common';
+import { getDetailedArticle, saveArticle } from '@/services/common';
 import { Button, useDisclosure } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { TbPlugConnected } from 'react-icons/tb';
 import parse from 'html-react-parser';
 import Publisher from './Publisher';
+import { debounce } from 'lodash';
 
 function makeHtmlContent(data) {
   // let title  = `<h1> ${data.data.title? data.data.title :"" } </h1>`
@@ -18,28 +19,19 @@ function makeHtmlContent(data) {
   }
 
   if (data.introduction_paragraph) {
-    htmlContent += `<h1>Introduction</h1>`;
     htmlContent += `<h3>${data.introduction_paragraph}</h3>`;
     htmlContent += '<br/>';
   }
 
   if (data.headings_paragraph) {
-    htmlContent += `<h1>Headings</h1>`;
     data.headings_paragraph.forEach((item) => {
       htmlContent += `<h2>${item.heading}</h2>`;
-      htmlContent += `<p>${item.paragraph}</p>`;
+      htmlContent += `<p >${item.paragraph}</p>`;
       htmlContent += '<br/>';
     });
   }
 
-  if (data.conclusion_paragraph) {
-    htmlContent += `<h2>Conclusion</h2>`;
-    htmlContent += `<h4>${data.conclusion_paragraph}</h4>`;
-    htmlContent += '<br/>';
-  }
-
   if (data.quora_questions) {
-    htmlContent += `<h1>Quora Questions</h1>`;
     data.quora_questions.forEach((item) => {
       htmlContent += `<h2>${item.question}</h2>`;
       htmlContent += `<p>${item.answer}</p>`;
@@ -48,7 +40,6 @@ function makeHtmlContent(data) {
   }
 
   if (data.ai_questions) {
-    htmlContent += `<h1>AI Questions</h1>`;
     data.quora_questions.forEach((item) => {
       htmlContent += `<h2>${item.question}</h2>`;
       htmlContent += `<p>${item.answer}</p>`;
@@ -57,12 +48,17 @@ function makeHtmlContent(data) {
   }
 
   if (data.related_questions) {
-    htmlContent += `<h1>Related Questions</h1>`;
     data.quora_questions.forEach((item) => {
       htmlContent += `<h2>${item.question}</h2>`;
       htmlContent += `<p>${item.answer}</p>`;
       htmlContent += '<br/>';
     });
+  }
+
+  if (data.conclusion_paragraph) {
+    htmlContent += `<h2>Conclusion</h2>`;
+    htmlContent += `<h4>${data.conclusion_paragraph}</h4>`;
+    htmlContent += '<br/>';
   }
   return htmlContent;
 }
@@ -75,6 +71,7 @@ function DetailedArticle() {
   const [articleFormated, setArticleFormated] = useState('');
   const [value, setValue] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   useEffect(() => {
     const fun = async () => {
       setLoading(true);
@@ -89,20 +86,28 @@ function DetailedArticle() {
     if (articleData) {
       let value = makeHtmlContent(articleData);
       setArticleFormated(value);
-      setValue(value);
+      setValue(articleData.html_content ? articleData.html_content : value);
     }
   }, [articleData]);
 
   const Article = () => {
     return (
       <div className="w-full h-full flex flex-col grow gap-2 border-2 overflow-y-scroll">
-        <div className="flex flex-col gap-2 w-full bg-white shadow-md rounded-md p-8">
+        <div className="flex flex-col gap-2 w-full bg-white shadow-md rounded-md p-8 whitespace-pre-wrap">
           {parse(articleFormated)}
         </div>
       </div>
     );
   };
+  const saveDataHandler = async (htmlContent: string) => {
+    try {
+      await saveArticle({ htmlContent: htmlContent, articleId: id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  const saveDataDebounced = useCallback(debounce(saveDataHandler, 3000), []);
   return (
     <div className="w-full  h-full bg-grey-200 text-grey-800 pr-4">
       <div className="flex items-center gap-[20px] justify-between p-4 sticky top-0 bg-grey-200 z-10  shadow-md border-[#ababab]">
@@ -131,11 +136,13 @@ function DetailedArticle() {
         {step == 1 ? (
           <Article />
         ) : (
-          <div className="w-full flex flex-col gap-2 border-2 ">
+          <div className="w-full flex flex-col gap-2 border-2 whitespace-pre-wrap">
             <QuillEditor
               articleData={articleData}
               value={value}
               setValue={setValue}
+              articleId={id}
+              saveEditorData={saveDataDebounced}
             />
           </div>
         )}

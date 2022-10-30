@@ -11,6 +11,7 @@ import {
   USER_LOGOUT,
   USER_VERIFY,
   SEND_VERIFICATION_EMAIL,
+  SAVE_ARTICLE,
 } from './constants';
 
 export const userLogin = (body: any) => api.post(USER_LOGIN, body);
@@ -32,3 +33,5 @@ export const verifyUser = (token: string | null) =>
   api.post(`${USER_VERIFY}?token=${token}`);
 
 export const sendVerificationEmail = () => api.post(SEND_VERIFICATION_EMAIL);
+
+export const saveArticle = (body: any) => api.patch(SAVE_ARTICLE, body);

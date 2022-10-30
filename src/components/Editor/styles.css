@@ -178,6 +178,9 @@
   background-color: #fafafa;
   border: 1px solid #ababab;
   height: 75vh;
+  white-space: pre-wrap !important;
+  word-wrap: break-word;
+  line-height: 1.42;
 }
 
 .ql-toolbar .ql-snow .ql-formats {
