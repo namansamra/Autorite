@@ -1,6 +1,6 @@
 import QuillEditor from '@/components/Editor/Quill';
 import { getDetailedArticle, saveArticle } from '@/services/common';
-import { Button, useDisclosure } from '@chakra-ui/react';
+import { Button, Skeleton, useDisclosure } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AiOutlineEdit } from 'react-icons/ai';
@@ -108,6 +108,19 @@ function DetailedArticle() {
   };
 
   const saveDataDebounced = useCallback(debounce(saveDataHandler, 3000), []);
+  if (loading) {
+    return (
+      <div className="w-full  h-full bg-grey-200 text-grey-800 pr-4">
+        <div className="flex h-screen items-center gap-[20px] justify-between p-4 sticky top-0 bg-grey-200 z-10  shadow-md border-[#ababab]">
+          <div className="flex flex-col gap-4 w-full">
+            <Skeleton h="200px" w={'100%'} />
+            <Skeleton h="200px" w={'100%'} />
+            <Skeleton h="200px" w={'100%'} />
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="w-full  h-full bg-grey-200 text-grey-800 pr-4">
       <div className="flex items-center gap-[20px] justify-between p-4 sticky top-0 bg-grey-200 z-10  shadow-md border-[#ababab]">

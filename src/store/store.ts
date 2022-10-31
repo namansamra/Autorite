@@ -11,12 +11,14 @@ interface IGlobalStore {
     dashboard: null | any;
     payment: null | any;
     wordPressInfo: null | any;
+    articleRows: null | any;
   };
   actions: {
     setUserInfo: (data: any) => void;
     setAuth: (data: any) => void;
     resetStore: () => void;
     setWordPressInfo: (data: any) => void;
+    setArticleRows: (data: any) => void;
   };
 }
 const initialState = {
@@ -28,6 +30,7 @@ const initialState = {
   payment: null,
   userInfo: null,
   wordPressInfo: null,
+  articleRows: [],
 };
 export const useGlobalStore = create<IGlobalStore>()(
   devtools(
@@ -56,6 +59,13 @@ export const useGlobalStore = create<IGlobalStore>()(
               })
             );
           },
+          setArticleRows(data) {
+            set(
+              produce((state: IGlobalStore) => {
+                state.appState.articleRows = data;
+              })
+            );
+          },
           //we cannot refer initial state object here because zustand make changes in that to save state and it is then referenced to the current state
           resetStore() {
             set(
@@ -69,6 +79,7 @@ export const useGlobalStore = create<IGlobalStore>()(
                   payment: null,
                   userInfo: null,
                   wordPressInfo: null,
+                  articleRows: [],
                 };
               })
             );

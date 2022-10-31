@@ -3,14 +3,17 @@ import { Formik, Field, Form, ErrorMessage, useFormik } from 'formik';
 import { Button, Input, Progress } from '@chakra-ui/react';
 import { AiOutlineFileAdd } from 'react-icons/ai';
 import { createArticleFormSchema } from '@/utils/validationSchema';
-import { createArticle, getLocations } from '@/services/common';
+import { createArticle, getAllArticles, getLocations } from '@/services/common';
 import { useHistory } from 'react-router-dom';
 import AsyncSelect from 'react-select/async';
 import { components } from 'react-select';
 import { debounce } from 'lodash';
+import { useGlobalStore } from '@/store/store';
 const CustomFormError = (msg) => {
   return <span className="text-[8px] leading-[10px] text-red-500">{msg}</span>;
 };
+
+let intervalId: any = null;
 
 interface Props {
   name: string;
@@ -49,12 +52,16 @@ const FormInput = ({ name, label, placeholder = '' }: Props) => {
     </Field>
   );
 };
-function CreateSimple() {
+function CreateSimple({ onClose }: { onClose: () => void }) {
   const history = useHistory();
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [isLoadingLocations, setIsLoadingLocations] = useState(false);
+  const [setArticleRows] = useGlobalStore((state) => [
+    state.actions.setArticleRows,
+  ]);
 
+  const [progressValue, setProgressValue] = useState(0);
   const searchFunction = useCallback(async (value: string, callback: any) => {
     setIsLoadingLocations(true);
     const res = await getLocations(value);
@@ -68,14 +75,35 @@ function CreateSimple() {
     if (!selectedLocation) {
       return;
     }
-    await createArticle(newValues);
-    history.push('/dashboard');
+    intervalId = setInterval(() => {
+      setProgressValue((prev) => {
+        if (prev >= 90) {
+          return 95;
+        } else {
+          return prev + 0.5;
+        }
+      });
+    }, 100);
+
+    try {
+      await createArticle(newValues);
+      const res = await getAllArticles();
+      const data = res.data.articles.reverse();
+      setArticleRows(data);
+      onClose();
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  useEffect(() => {
+    return () => clearInterval(intervalId);
+  }, []);
   return (
-    <div className="w-full h-screen bg-grey-200 text-grey-800">
-      <div className="w-full h-full flex flex-col gap-5 p-4 border-2 ">
-        <h1 className="font-bold text-3xl">Create an article</h1>
-        <div className="flex w-full shadow-sm mx-auto bg-white p-8 rounded-md">
+    <div className="w-full h-full text-grey-800">
+      <div className="w-full h-full flex flex-col gap-5 p-4 ">
+        {/* <h1 className="font-bold text-3xl">Create an article</h1> */}
+        <div className="flex w-full mx-auto bg-white py-8 rounded-md">
           <Formik
             initialValues={initialValues}
             validationSchema={createArticleFormSchema}
@@ -100,7 +128,6 @@ function CreateSimple() {
                       field: { onChange },
                       form: { touched, errors, values },
                     }) => {
-                      console.log(onChange, values);
                       return (
                         <div className="flex gap-[5px]">
                           <label
@@ -110,7 +137,7 @@ function CreateSimple() {
                             Location
                           </label>
                           <AsyncSelect
-                            className="min-w-[500px]"
+                            className="w-[100%]"
                             components={{
                               Option: (props: any) => {
                                 return (
@@ -148,26 +175,25 @@ function CreateSimple() {
                 </div>
                 {props.isSubmitting ? (
                   <Progress
-                    value={60}
-                    className="mt-10"
-                    animation={'ease-in-out'}
-                    isIndeterminate
+                    value={progressValue}
+                    isAnimated={true}
+                    hasStripe={true}
                     sx={{
                       div: {
-                        background:
-                          'linear-gradient(to right, transparent 0%,#57d3c7 50%, transparent 100%)',
+                        backgroundColor: '#57d3c7 ',
                       },
                     }}
+                    className="mt-10 rounded-md"
                   />
                 ) : (
                   <Button
-                    className="h-[44px] w-[180px] py-3 bg-primary-500 text-white mt-6 text-md"
+                    className="h-[44px] w-[100%] py-3 bg-primary-500 text-white mt-6 text-lg"
                     isLoading={props.isSubmitting}
                     type="submit"
                     leftIcon={<AiOutlineFileAdd />}
                     variant="primary"
                   >
-                    Create Article
+                    Create
                   </Button>
                 )}
               </Form>
