@@ -40,7 +40,7 @@ function makeHtmlContent(data) {
   }
 
   if (data.ai_questions) {
-    data.quora_questions.forEach((item) => {
+    data.ai_questions.forEach((item) => {
       htmlContent += `<h2>${item.question}</h2>`;
       htmlContent += `<p>${item.answer}</p>`;
       htmlContent += '<br/>';
@@ -48,7 +48,7 @@ function makeHtmlContent(data) {
   }
 
   if (data.related_questions) {
-    data.quora_questions.forEach((item) => {
+    data.related_questions.forEach((item) => {
       htmlContent += `<h2>${item.question}</h2>`;
       htmlContent += `<p>${item.answer}</p>`;
       htmlContent += '<br/>';
@@ -60,7 +60,8 @@ function makeHtmlContent(data) {
     htmlContent += `<h4>${data.conclusion_paragraph}</h4>`;
     htmlContent += '<br/>';
   }
-  return htmlContent;
+  //replaces any *
+  return htmlContent.replace(/[*]+/gi, '•');
 }
 
 function DetailedArticle() {

@@ -32,6 +32,7 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react';
 import { CreateSimplePage } from '../Create';
+import CustomHighlighter from '@/components/CustomHighlighter/CustomHighlighter';
 
 const buttons = [
   {
@@ -118,7 +119,7 @@ const columns = [
       return (
         <>
           <Box fontSize="12.64px" lineHeight="14px" color="#344054">
-            {value}
+            <CustomHighlighter value={value} />
           </Box>
         </>
       );
@@ -156,7 +157,7 @@ function Dashboard() {
     const fun = async () => {
       try {
         const { data } = await getWordpressInfo();
-        setWordPressInfo(data.response);
+        setWordPressInfo(data);
         console.log(data);
       } catch (error) {
         console.log(error);

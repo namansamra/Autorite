@@ -1,5 +1,6 @@
 import { useGlobalStore } from '@/store/store';
 import axios from 'axios';
+import { userLogout } from './common';
 import { API_BASE_URL } from './constants';
 
 export const api = axios.create({
@@ -10,6 +11,21 @@ export const api = axios.create({
     'x-api-key': 'LiTHO7PPfE1J0ReqBt7zP2wARtlu60G2RFEX59m3',
   },
 });
+
+const refreshToken = useGlobalStore?.getState()?.appState?.auth?.refresh?.token;
+const resetStore = useGlobalStore?.getState()?.actions?.resetStore;
+
+const handleLogout = async () => {
+  try {
+    await userLogout({ refreshToken });
+  } catch (error) {
+    console.log(error);
+  } finally {
+    resetStore();
+    localStorage.clear();
+    window.location.replace('/login');
+  }
+};
 
 api.interceptors.request.use((config: any) => {
   const token = useGlobalStore?.getState()?.appState?.auth?.access?.token;
@@ -25,11 +41,12 @@ api.interceptors.response.use(
       const { status, data } = error.response;
       switch (status) {
         case 400:
-          if (data && data.hasOwnProperty('message')) {
-            if (data.message === 'Token Expired') {
-              window.location.replace('/login');
-            }
-          }
+          // if (data && data.hasOwnProperty('message')) {
+          //   if (data.message === 'Token Expired') {
+          //     window.location.replace('/login');
+          //   }
+          // }
+          handleLogout();
           break;
 
         default:

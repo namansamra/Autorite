@@ -22,7 +22,11 @@ import { SiQuantconnect } from 'react-icons/si';
 import { connectWordpress } from '@/services/common';
 import CustomToast from '@/components/Toast/Toast';
 function MyAccount() {
-  const userInfo = useGlobalStore((state) => state.appState.userInfo);
+  const [userInfo, wordPressInfo] = useGlobalStore((state) => [
+    state.appState.userInfo,
+    state.appState.wordPressInfo,
+  ]);
+  console.log(wordPressInfo);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [step, setStep] = useState(0);
   const [wordpressStatus, setWordpressStatus] = useState('not-connected');
@@ -77,7 +81,7 @@ function MyAccount() {
           <div className="w-full h-full p-4 bg-white shadow-md rounded-lg">
             {step == 0 ? (
               <div className="flex gap-20 p-10">
-                <div className="flex items-center justify-center  bg-primary-100 border-[2px] border-primary-400 min-h-[200px] min-w-[200px] rounded-full text-primary-900 text-6xl font-medium uppercase shadow-lg">
+                <div className="flex items-center justify-center  bg-primary-100 border-[2px] border-primary-400  min-h-[200px] min-w-[200px] rounded-full text-primary-900 text-6xl font-medium uppercase shadow-lg">
                   {userInfo?.name?.substring(0, 1)}
                 </div>
                 <div className="flex flex-col gap-3 justify-center">
@@ -96,110 +100,143 @@ function MyAccount() {
                 </div>
               </div>
             ) : (
-              <div className="flex gap-5 justify-center">
-                <div className="flex flex-col items-center w-[300px] shadow-xl p-5 py-8 my-5 gap-4 rounded-md bg-grey-100">
-                  <BsWordpress className="h-[200px] w-[200px] text-grey-400" />
-                  <Button
-                    variant={'primary'}
-                    rightIcon={<TbPlugConnected />}
-                    onClick={() => {
-                      onOpen();
-                    }}
-                  >
-                    Connect Wordpress
-                  </Button>
-                  <Modal isOpen={isOpen} onClose={onClose}>
-                    <ModalOverlay />
-                    <ModalContent>
-                      <ModalHeader className="flex items-center gap-2">
-                        Connect your Wordpress <FaWordpressSimple />
-                      </ModalHeader>
-                      <ModalCloseButton />
-                      <ModalBody pb={6}>
-                        {wordpressStatus == 'not-connected' ? (
-                          <Formik
-                            validationSchema={wordPressConnectSchema}
-                            initialValues={initialValues}
-                            onSubmit={handleConnectWordpress}
-                          >
-                            {(props) => (
-                              <Form>
-                                <div className="flex w-full flex-col gap-2">
-                                  <Field name="domain">
-                                    {({ field, form: { touched, errors } }) => {
-                                      return (
-                                        <div className="flex flex-col gap-[5px]">
-                                          <Input
-                                            placeholder="Wordpress Site Address"
-                                            {...field}
-                                            className="px-4 py-3"
-                                          />
-                                          <ErrorMessage
-                                            name="domain"
-                                            render={CustomFormError}
-                                          />
-                                        </div>
-                                      );
-                                    }}
-                                  </Field>
+              <div className="flex gap-5">
+                {wordPressInfo ? (
+                  <div className="flex gap-20 p-10">
+                    <BsWordpress className="h-[200px] w-[200px] text-primary-300" />
+                    <div className="flex flex-col gap-3 justify-center">
+                      <div className="flex gap-10 items-center text-lg">
+                        <div className="font-bold min-w-[100px]">Username</div>
+                        <div>{wordPressInfo?.username}</div>
+                      </div>
+                      <div className="flex gap-10 items-center text-lg">
+                        <div className="font-bold min-w-[100px]">Domain</div>
+                        <a
+                          href={wordPressInfo?.domain}
+                          className="hover:text-primary-700 underline"
+                          target={'_blank'}
+                        >
+                          {wordPressInfo?.domain}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center w-[300px] shadow-xl p-5 py-8 my-5 gap-4 rounded-md bg-grey-100">
+                    <BsWordpress className="h-[200px] w-[200px] text-grey-400" />
+                    <Button
+                      variant={'primary'}
+                      rightIcon={<TbPlugConnected />}
+                      onClick={() => {
+                        onOpen();
+                      }}
+                    >
+                      Connect Wordpress
+                    </Button>
+                    <Modal isOpen={isOpen} onClose={onClose}>
+                      <ModalOverlay />
+                      <ModalContent>
+                        <ModalHeader className="flex items-center gap-2">
+                          Connect your Wordpress <FaWordpressSimple />
+                        </ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody pb={6}>
+                          {wordpressStatus == 'not-connected' ? (
+                            <Formik
+                              validationSchema={wordPressConnectSchema}
+                              initialValues={initialValues}
+                              onSubmit={handleConnectWordpress}
+                            >
+                              {(props) => (
+                                <Form>
+                                  <div className="flex w-full flex-col gap-2">
+                                    <Field name="domain">
+                                      {({
+                                        field,
+                                        form: { touched, errors },
+                                      }) => {
+                                        return (
+                                          <div className="flex flex-col gap-[5px]">
+                                            <Input
+                                              placeholder="Wordpress Site Address"
+                                              {...field}
+                                              className="px-4 py-3"
+                                            />
+                                            <ErrorMessage
+                                              name="domain"
+                                              render={CustomFormError}
+                                            />
+                                          </div>
+                                        );
+                                      }}
+                                    </Field>
 
-                                  <Field name="username">
-                                    {({ field, form: { touched, errors } }) => {
-                                      return (
-                                        <div className="flex flex-col gap-[5px]">
-                                          <Input
-                                            placeholder="Username"
-                                            {...field}
-                                            className="px-4 py-3"
-                                          />
-                                          <ErrorMessage
-                                            name="username"
-                                            render={CustomFormError}
-                                          />
-                                        </div>
-                                      );
-                                    }}
-                                  </Field>
-                                  <Field name="password">
-                                    {({ field, form: { touched, errors } }) => {
-                                      return (
-                                        <div className="flex flex-col gap-[5px]">
-                                          <Input
-                                            name="password"
-                                            placeholder="Application Password"
-                                            {...field}
-                                            className="px-4 py-3"
-                                            type="password"
-                                          />
-                                          <ErrorMessage
-                                            name="password"
-                                            render={CustomFormError}
-                                          />
-                                        </div>
-                                      );
-                                    }}
-                                  </Field>
-                                </div>
-                                <Button
-                                  className="h-[44px] w-full py-3 bg-primary-500 text-white mt-6"
-                                  isLoading={props.isSubmitting}
-                                  type="submit"
-                                >
-                                  Connect
-                                </Button>
-                              </Form>
-                            )}
-                          </Formik>
-                        ) : (
-                          <div className="flex flex-col gap-4 p-5 bg-white text-2xl text-grey-700 w-full items-center">
-                            <BsFillCheckCircleFill className="text-primary-300 h-[50px] w-[50px]" />
-                            <p>Your Wordpress is connected!!</p>
-                          </div>
-                        )}
-                      </ModalBody>
-                    </ModalContent>
-                  </Modal>
-                </div>
+                                    <Field name="username">
+                                      {({
+                                        field,
+                                        form: { touched, errors },
+                                      }) => {
+                                        return (
+                                          <div className="flex flex-col gap-[5px]">
+                                            <Input
+                                              placeholder="Username"
+                                              {...field}
+                                              className="px-4 py-3"
+                                            />
+                                            <ErrorMessage
+                                              name="username"
+                                              render={CustomFormError}
+                                            />
+                                          </div>
+                                        );
+                                      }}
+                                    </Field>
+                                    <Field name="password">
+                                      {({
+                                        field,
+                                        form: { touched, errors },
+                                      }) => {
+                                        return (
+                                          <div className="flex flex-col gap-[5px]">
+                                            <Input
+                                              name="password"
+                                              placeholder="Application Password"
+                                              {...field}
+                                              className="px-4 py-3"
+                                              type="password"
+                                            />
+                                            <ErrorMessage
+                                              name="password"
+                                              render={CustomFormError}
+                                            />
+                                          </div>
+                                        );
+                                      }}
+                                    </Field>
+                                  </div>
+                                  <Button
+                                    className="h-[44px] w-full py-3 bg-primary-500 text-white mt-6"
+                                    isLoading={props.isSubmitting}
+                                    type="submit"
+                                  >
+                                    Connect
+                                  </Button>
+                                </Form>
+                              )}
+                            </Formik>
+                          ) : (
+                            <>
+                              <div className="flex flex-col gap-4 p-5 bg-white text-2xl text-grey-700 w-full items-center">
+                                <BsFillCheckCircleFill className="text-primary-300 h-[50px] w-[50px]" />
+                                <p>Your Wordpress is connected!!</p>
+                              </div>
+                            </>
+                          )}
+                        </ModalBody>
+                      </ModalContent>
+                    </Modal>
+                  </div>
+                )}
                 {/* <div className="flex flex-col bg-white items-center w-[300px] shadow-lg p-5  my-5 gap-4 rounded-md">
                   <CgMenuRound className="h-[200px] w-[200px] text-grey-400" />
                   <Button
