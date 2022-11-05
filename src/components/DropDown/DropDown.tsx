@@ -47,21 +47,21 @@ const DropDown = ({
           lazyBehavior="keepMounted"
           flip={false}
         >
-          <div className="flex flex-col gap-2">
-            <div className="text-bold text-sm font-semibold">{label}</div>
+          <div className="flex flex-col gap-2 w-full">
+            <div className="text-bold text-sm font-medium">{label}</div>
             <MenuButton
               as={Button}
               onClick={() => {
                 isOpen ? onClose() : onOpen();
               }}
-              className="h-8 rounded-sm  border-[1px] border-[#d0d5dd] bg-[#fefefe] text-md font-bold p-4 text-grey-700 min-w-[120px] max-w-[200px]"
-              sx={{
-                'span:first-of-type': {
-                  overflow: 'hidden',
-                  maxWidth: '240px',
-                  textOverflow: 'ellipsis',
-                },
-              }}
+              className="h-8 rounded-sm  border-[1px] border-[#d0d5dd] bg-[#fefefe] text-md font-semibold p-4 text-grey-700 min-w-[120px] w-full text-left"
+              // sx={{
+              //   'span:first-of-type': {
+              //     overflow: 'hidden',
+              //     maxWidth: '240px',
+              //     textOverflow: 'ellipsis',
+              //   },
+              // }}
               rightIcon={<FiChevronDown />}
               position="relative"
             >
@@ -204,22 +204,22 @@ const DropDown = ({
           </MenuList>
         </Menu>
       ) : (
-        <Menu closeOnSelect={closeOnSelect} isOpen={isOpen}>
-          <div className="flex flex-col gap-2">
-            <div className="text-bold text-sm font-semibold">{label}</div>
+        <Menu closeOnSelect={closeOnSelect} isOpen={isOpen} matchWidth>
+          <div className="flex flex-col gap-2 w-full">
+            <div className="text-bold text-sm font-medium">{label}</div>
             <MenuButton
               as={Button}
               onClick={() => {
                 isOpen ? onClose() : onOpen();
               }}
-              className="h-8 rounded-sm  border-[1px] border-[#d0d5dd] bg-[#fefefe] text-md font-bold p-4 text-grey-700 min-w-[120px] max-w-[200px]"
-              sx={{
-                'span:first-of-type': {
-                  overflow: 'hidden',
-                  maxWidth: '240px',
-                  textOverflow: 'ellipsis',
-                },
-              }}
+              className="h-8 rounded-sm  border-[1px] border-[#d0d5dd] bg-[#fefefe] text-md font-semibold p-4 text-grey-700 min-w-[120px] text-start py-5"
+              // sx={{
+              //   'span:first-of-type': {
+              //     overflow: 'hidden',
+              //     maxWidth: '240px',
+              //     textOverflow: 'ellipsis',
+              //   },
+              // }}
               rightIcon={<FiChevronDown />}
             >
               <chakra.span>{currentState}</chakra.span>
