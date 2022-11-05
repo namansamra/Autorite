@@ -9,12 +9,12 @@ import AsyncSelect from 'react-select/async';
 import { components } from 'react-select';
 import { debounce } from 'lodash';
 import { useGlobalStore } from '@/store/store';
+import async from 'react-select/dist/declarations/src/async/index';
 const CustomFormError = (msg) => {
   return <span className="text-[8px] leading-[10px] text-red-500">{msg}</span>;
 };
 
 let intervalId: any = null;
-
 interface Props {
   name: string;
   label: string;
@@ -60,6 +60,21 @@ function CreateSimple({ onClose }: { onClose: () => void }) {
   const [setArticleRows] = useGlobalStore((state) => [
     state.actions.setArticleRows,
   ]);
+
+  const [defaultLocations, setDefaultLocations] = useState([]);
+
+  useEffect(() => {
+    const getDefaultLocations = async () => {
+      try {
+        const res = await getLocations('');
+        setDefaultLocations(res.data.locations);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getDefaultLocations();
+  }, []);
 
   const [progressValue, setProgressValue] = useState(0);
   const searchFunction = useCallback(async (value: string, callback: any) => {
@@ -167,6 +182,7 @@ function CreateSimple({ onClose }: { onClose: () => void }) {
                               setSelectedLocation(val.name);
                             }}
                             placeholder="Location specifity for your article"
+                            defaultOptions={defaultLocations}
                           />
                         </div>
                       );

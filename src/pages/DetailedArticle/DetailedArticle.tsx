@@ -157,10 +157,16 @@ function DetailedArticle() {
               setValue={setValue}
               articleId={id}
               saveEditorData={saveDataDebounced}
+              articleFormated={articleFormated}
             />
           </div>
         )}
-        <Publisher isOpen={isOpen} onClose={onClose} />
+        <Publisher
+          isOpen={isOpen}
+          onClose={onClose}
+          articleData={articleData}
+          htmlContent={articleFormated}
+        />
       </div>
     </div>
   );

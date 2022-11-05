@@ -3,11 +3,14 @@ import ReactQuill, { Quill } from 'react-quill';
 import { ImageDrop } from 'quill-image-drop-module';
 import ImageResize from 'quill-image-resize-module-react';
 import VideoResize from 'quill-video-resize-module2';
+import { ImUndo } from 'react-icons/im';
+import { FiSave } from 'react-icons/fi';
 import 'react-quill/dist/quill.snow.css';
 Quill.register('modules/VideoResize', VideoResize);
 Quill.register('modules/imageDrop', ImageDrop);
 Quill.register('modules/imageResize', ImageResize);
 import './styles.css';
+import { Button, Checkbox } from '@chakra-ui/react';
 let BaseImageFormat = Quill.import('formats/image');
 const ImageFormatAttributesList = ['alt', 'height', 'width', 'style'];
 class ImageFormat extends BaseImageFormat {
@@ -145,9 +148,11 @@ function QuillEditor({
   value = '',
   setValue = (val: any) => {},
   articleId = '',
+  articleFormated = '',
 }) {
   const ref = useRef();
   const [loading, setLoading] = useState(true);
+  const [isAutoSave, setIsAutoSave] = useState(true);
   useEffect(() => {
     if (ref.current) {
       docu.mounted = true;
@@ -171,21 +176,49 @@ function QuillEditor({
       }
     };
   }, []);
-
   return (
     <>
-      <div
-        style={{
-          flexGrow: 1,
-          position: 'relative',
-        }}
-        id="editor-bound"
-      >
+      <div className="flex flex-grow relative flex-col" id="editor-bound">
+        <div className="flex gap-4 items-center bg-whiteSmoke shadow-md w-full px-4 py-2 justify-between">
+          <Checkbox
+            isChecked={isAutoSave}
+            onChange={(e) => setIsAutoSave(e.target.checked)}
+          >
+            Auto Save
+          </Checkbox>
+
+          <div className="flex gap-4 items-center">
+            <Button
+              variant={'primary'}
+              onClick={() => {
+                setValue(articleFormated);
+              }}
+              className="h-[25px]"
+              rightIcon={<ImUndo />}
+            >
+              Paste Original Article
+            </Button>
+            {!isAutoSave && (
+              <Button
+                variant={'primary'}
+                onClick={() => {
+                  saveEditorData(value);
+                }}
+                className="h-[25px]"
+                rightIcon={<FiSave />}
+              >
+                Save
+              </Button>
+            )}
+          </div>
+        </div>
         <ReactQuill
           ref={ref as React.MutableRefObject<any>}
           onChange={(value) => {
             setValue(value);
-            saveEditorData(value);
+            if (isAutoSave) {
+              saveEditorData(value);
+            }
           }}
           theme={quill.theme}
           modules={quill.modules}

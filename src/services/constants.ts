@@ -11,3 +11,4 @@ export const GET_WORDPRESS_INFO = 'wordpress/details';
 export const USER_VERIFY = 'auth/verify-email';
 export const SEND_VERIFICATION_EMAIL = 'auth/send-verification-email';
 export const SAVE_ARTICLE = 'article/save';
+export const PUBLISH_ARTICLE = 'wordpress/publish';

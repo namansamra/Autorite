@@ -22,7 +22,14 @@ function AuthRoutes() {
       <Route
         exact
         path={Setting}
-        render={(props) => <div {...props}>Settings</div>}
+        render={(props) => (
+          <div
+            {...props}
+            className="w-screen h-screen flex justify-center items-center text-4xl font-semibold border-2"
+          >
+            Comming Soon...
+          </div>
+        )}
       />
       <Route exact path={CreateSimple} component={CreateSimplePage} />
       <Redirect to={Dashboard} />

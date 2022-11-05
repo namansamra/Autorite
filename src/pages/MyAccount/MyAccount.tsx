@@ -26,7 +26,6 @@ function MyAccount() {
     state.appState.userInfo,
     state.appState.wordPressInfo,
   ]);
-  console.log(wordPressInfo);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [step, setStep] = useState(0);
   const [wordpressStatus, setWordpressStatus] = useState('not-connected');
