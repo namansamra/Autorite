@@ -248,7 +248,7 @@ function Dashboard() {
         closeOnOverlayClick={false}
       >
         <ModalOverlay />
-        <ModalContent className="h-[50vh]">
+        <ModalContent>
           <ModalHeader>Create Article Instantly</ModalHeader>
           <ModalCloseButton />
           <ModalBody className="h-[100%]">

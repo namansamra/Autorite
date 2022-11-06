@@ -13,11 +13,6 @@ function makeHtmlContent(data) {
   // let title  = `<h1> ${data.data.title? data.data.title :"" } </h1>`
   let htmlContent = ``;
 
-  if (data.title || data.keyword) {
-    htmlContent += `<h1>${data.title || data.keyword}</h1>`;
-    htmlContent += '<br/>';
-  }
-
   if (data.introduction_paragraph) {
     htmlContent += `<h3>${data.introduction_paragraph}</h3>`;
     htmlContent += '<br/>';
@@ -165,7 +160,7 @@ function DetailedArticle() {
           isOpen={isOpen}
           onClose={onClose}
           articleData={articleData}
-          htmlContent={articleFormated}
+          htmlContent={value}
         />
       </div>
     </div>

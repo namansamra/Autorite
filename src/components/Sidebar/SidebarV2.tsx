@@ -32,12 +32,12 @@ export const sideBarLinks = [
     icon: <PersonIcon className="h-[14px] w-[14px]" />,
     activeIndex: 1,
   },
-  {
-    name: 'Settings',
-    link: Setting,
-    icon: <SettingsIcon className="h-[14px] w-[14px]" />,
-    activeIndex: 3,
-  },
+  // {
+  //   name: 'Settings',
+  //   link: Setting,
+  //   icon: <SettingsIcon className="h-[14px] w-[14px]" />,
+  //   activeIndex: 3,
+  // },
   {
     name: 'Log out',
     link: Login,
@@ -73,7 +73,12 @@ function Sidebar() {
     <div className="sticky top-0 flex h-screen flex-col justify-between bg-[#F7FAFC] w-[70px] overflow-visible hover:w-[250px] transition-[width] duration-500">
       <div className="menu-container">
         <div className="flex h-32 items-center justify-center px-2">
-          <img src={'/vite.svg'} className="h-20 w-20" />
+          <img
+            src={
+              'https://autorite.me/wp-content/themes/autorite/image/AUTORITE-footer.png'
+            }
+            alt="A"
+          />
         </div>
         <div className="flex flex-col">
           {sideBarLinks.map((menuItem, index) => (

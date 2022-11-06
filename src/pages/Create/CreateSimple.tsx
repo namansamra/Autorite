@@ -118,7 +118,7 @@ function CreateSimple({ onClose }: { onClose: () => void }) {
     <div className="w-full h-full text-grey-800">
       <div className="w-full h-full flex flex-col gap-5 p-4 ">
         {/* <h1 className="font-bold text-3xl">Create an article</h1> */}
-        <div className="flex w-full mx-auto bg-white py-8 rounded-md">
+        <div className="flex w-full mx-auto bg-white py-2 rounded-md">
           <Formik
             initialValues={initialValues}
             validationSchema={createArticleFormSchema}
