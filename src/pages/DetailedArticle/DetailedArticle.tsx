@@ -14,14 +14,27 @@ function makeHtmlContent(data) {
   let htmlContent = ``;
 
   if (data.introduction_paragraph) {
-    htmlContent += `<h3>${data.introduction_paragraph}</h3>`;
+    htmlContent += `<p>${data.introduction_paragraph}</p>`;
+    htmlContent += '<br/>';
+  }
+
+  if (data.featured_image) {
+    const { large, medium, small } = data.featured_image;
+    htmlContent += `<img src=${
+      large || medium || small
+    } className="w-[80%] mx-auto h-[${
+      large ? '600px' : medium ? '400px' : '300px'
+    }]"/>`;
     htmlContent += '<br/>';
   }
 
   if (data.headings_paragraph) {
     data.headings_paragraph.forEach((item) => {
       htmlContent += `<h2>${item.heading}</h2>`;
-      htmlContent += `<p >${item.paragraph}</p>`;
+      htmlContent += `<p >${item.paragraph.replace(
+        /(^|\n)[*]\s/gm,
+        '\n• '
+      )}</p>`;
       htmlContent += '<br/>';
     });
   }
@@ -29,7 +42,7 @@ function makeHtmlContent(data) {
   if (data.quora_questions) {
     data.quora_questions.forEach((item) => {
       htmlContent += `<h2>${item.question}</h2>`;
-      htmlContent += `<p>${item.answer}</p>`;
+      htmlContent += `<p>${item.answer.replace(/(^|\n)[*]\s/gm, '\n• ')}</p>`;
       htmlContent += '<br/>';
     });
   }
@@ -37,7 +50,7 @@ function makeHtmlContent(data) {
   if (data.ai_questions) {
     data.ai_questions.forEach((item) => {
       htmlContent += `<h2>${item.question}</h2>`;
-      htmlContent += `<p>${item.answer}</p>`;
+      htmlContent += `<p>${item.answer.replace(/(^|\n)[*]\s/gm, '\n• ')}</p>`;
       htmlContent += '<br/>';
     });
   }
@@ -45,18 +58,20 @@ function makeHtmlContent(data) {
   if (data.related_questions) {
     data.related_questions.forEach((item) => {
       htmlContent += `<h2>${item.question}</h2>`;
-      htmlContent += `<p>${item.answer}</p>`;
+      htmlContent += `<p>${item.answer.replace(/(^|\n)[*]\s/gm, '\n• ')}</p>`;
       htmlContent += '<br/>';
     });
   }
 
   if (data.conclusion_paragraph) {
     htmlContent += `<h2>Conclusion</h2>`;
-    htmlContent += `<h4>${data.conclusion_paragraph}</h4>`;
+    htmlContent += `<h4>${data.conclusion_paragraph}</h4> `;
     htmlContent += '<br/>';
   }
   //replaces any *
-  return htmlContent.replace(/[*]+/gi, '•');
+  // console.log(htmlContent);
+  //https://regex101.com/
+  return htmlContent;
 }
 
 function DetailedArticle() {
@@ -67,6 +82,7 @@ function DetailedArticle() {
   const [articleFormated, setArticleFormated] = useState('');
   const [value, setValue] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [savingData, setSavingData] = useState(false);
 
   useEffect(() => {
     const fun = async () => {
@@ -96,14 +112,17 @@ function DetailedArticle() {
     );
   };
   const saveDataHandler = async (htmlContent: string) => {
+    setSavingData(true);
     try {
       await saveArticle({ htmlContent: htmlContent, articleId: id });
     } catch (error) {
       console.log(error);
+    } finally {
+      setSavingData(false);
     }
   };
 
-  const saveDataDebounced = useCallback(debounce(saveDataHandler, 3000), []);
+  const saveDataDebounced = useCallback(debounce(saveDataHandler, 2000), []);
   if (loading) {
     return (
       <div className="w-full  h-full bg-grey-200 text-grey-800 pr-4">
@@ -151,8 +170,10 @@ function DetailedArticle() {
               value={value}
               setValue={setValue}
               articleId={id}
-              saveEditorData={saveDataDebounced}
+              saveEditorDataDebounce={saveDataDebounced}
               articleFormated={articleFormated}
+              savingData={savingData}
+              instantSaveData={saveDataHandler}
             />
           </div>
         )}

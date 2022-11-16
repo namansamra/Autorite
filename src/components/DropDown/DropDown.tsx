@@ -36,7 +36,6 @@ const DropDown = ({
     handler: () => onClose(),
   });
 
-  console.log(currentState);
   return (
     <>
       {isTypeDate ? (

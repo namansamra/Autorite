@@ -141,7 +141,7 @@ let docu: any = document;
 
 function QuillEditor({
   access = true,
-  saveEditorData = (value: string) => {},
+  saveEditorDataDebounce = (value: string) => {},
   getEditorData = () => {},
   articleData,
   htmlContent = '',
@@ -149,6 +149,8 @@ function QuillEditor({
   setValue = (val: any) => {},
   articleId = '',
   articleFormated = '',
+  savingData = false,
+  instantSaveData = (val: any) => {},
 }) {
   const ref = useRef();
   const [loading, setLoading] = useState(true);
@@ -172,7 +174,7 @@ function QuillEditor({
       let currVal = docu?.quill?.editor?.root?.innerHTML;
       if (currVal && (currVal != '\n' || currVal != '<br/>')) {
         docu.mounted = false;
-        saveEditorData(currVal);
+        instantSaveData(currVal);
       }
     };
   }, []);
@@ -202,10 +204,11 @@ function QuillEditor({
               <Button
                 variant={'primary'}
                 onClick={() => {
-                  saveEditorData(value);
+                  instantSaveData(value);
                 }}
                 className="h-[25px]"
                 rightIcon={<FiSave />}
+                isLoading={savingData}
               >
                 Save
               </Button>
@@ -217,7 +220,7 @@ function QuillEditor({
           onChange={(value) => {
             setValue(value);
             if (isAutoSave) {
-              saveEditorData(value);
+              saveEditorDataDebounce(value);
             }
           }}
           theme={quill.theme}

@@ -18,13 +18,19 @@ const resetStore = useGlobalStore?.getState()?.actions?.resetStore;
 const handleLogout = async () => {
   try {
     await userLogout({ refreshToken });
-  } catch (error) {
-    console.log(error);
-  } finally {
     resetStore();
     localStorage.clear();
     window.location.replace('/login');
+  } catch (error) {
+    console.log(error);
+    resetStore();
+    localStorage.clear();
   }
+  // } finally {
+  //   resetStore();
+  //   localStorage.clear();
+  //   window.location.replace('/login');
+  // }
 };
 
 api.interceptors.request.use((config: any) => {
