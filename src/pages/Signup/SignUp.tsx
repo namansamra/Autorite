@@ -40,6 +40,21 @@ const SignUp = () => {
     <div className="flex h-screen w-screen">
       <div className="flex w-2/5 flex-col items-center justify-center bg-primary-100 bg-[url('/SidebarHelpImage.png')] bg-no-repeat bg-cover"></div>
       <div className="flex w-3/5 bg-whiteSmoke">
+        <div className="flex flex-col  w-full items-center justify-center text-4xl font-bold">
+          <img
+            src="https://autorite.me/wp-content/themes/autorite/image/AUTORITE-footer.png"
+            alt="autorite"
+          />
+          Comming Soon...
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="flex h-screen w-screen">
+      <div className="flex w-2/5 flex-col items-center justify-center bg-primary-100 bg-[url('/SidebarHelpImage.png')] bg-no-repeat bg-cover"></div>
+      <div className="flex w-3/5 bg-whiteSmoke">
         <div className="flex w-[80%] bg-white m-auto flex-col items-center justify-center py-10 rounded-xl shadow-2xl">
           <div className="flex w-[50%] flex-col">
             <div className="flex w-full flex-col">
