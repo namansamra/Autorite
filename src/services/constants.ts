@@ -12,3 +12,5 @@ export const USER_VERIFY = 'auth/verify-email';
 export const SEND_VERIFICATION_EMAIL = 'auth/send-verification-email';
 export const SAVE_ARTICLE = 'article/save';
 export const PUBLISH_ARTICLE = 'wordpress/publish';
+export const GET_PLANS = 'subscription/plans';
+export const BUY_PLAN = 'subscription/create-session';

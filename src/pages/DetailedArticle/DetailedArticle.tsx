@@ -9,22 +9,39 @@ import parse from 'html-react-parser';
 import Publisher from './Publisher';
 import { debounce } from 'lodash';
 
-function makeHtmlContent(data) {
+function makeHtmlContent(data, setSubInfo) {
   // let title  = `<h1> ${data.data.title? data.data.title :"" } </h1>`
+  const subInfo = {
+    word_count: 0,
+    keyword_density: 0,
+    grade: 0,
+  };
+  if (data.html_content) {
+    let stringData = data.html_content.replaceAll('<.*?>', '');
+    subInfo.word_count += stringData.split(' ').length;
+    subInfo.keyword_density += +(
+      ((stringData.toLowerCase().split(data.keyword.toLowerCase()).length - 1) /
+        subInfo.word_count) *
+      100
+    ).toFixed(2);
+    setSubInfo({ ...subInfo });
+    return data.html_content;
+  }
   let htmlContent = ``;
 
   if (data.introduction_paragraph) {
     htmlContent += `<p>${data.introduction_paragraph}</p>`;
     htmlContent += '<br/>';
+    subInfo.word_count += data.introduction_paragraph.split(' ').length;
+    subInfo.keyword_density +=
+      data.introduction_paragraph.split(data.keyword).length - 1;
   }
 
   if (data.featured_image) {
     const { large, medium, small } = data.featured_image;
     htmlContent += `<img src=${
-      large || medium || small
-    } className="w-[80%] mx-auto h-[${
-      large ? '600px' : medium ? '400px' : '300px'
-    }]"/>`;
+      medium || small
+    } className="max-w-[80%] mx-auto max-h-[600px]"/>`;
     htmlContent += '<br/>';
   }
 
@@ -36,6 +53,10 @@ function makeHtmlContent(data) {
         '\n• '
       )}</p>`;
       htmlContent += '<br/>';
+      subInfo.word_count += item.paragraph.split(' ').length;
+      subInfo.keyword_density +=
+        item.paragraph.toLowerCase().split(data.keyword.toLowerCase()).length -
+        1;
     });
   }
 
@@ -44,6 +65,9 @@ function makeHtmlContent(data) {
       htmlContent += `<h2>${item.question}</h2>`;
       htmlContent += `<p>${item.answer.replace(/(^|\n)[*]\s/gm, '\n• ')}</p>`;
       htmlContent += '<br/>';
+      subInfo.word_count += item.answer.split(' ').length;
+      subInfo.keyword_density +=
+        item.answer.toLowerCase().split(data.keyword.toLowerCase()).length - 1;
     });
   }
 
@@ -52,6 +76,9 @@ function makeHtmlContent(data) {
       htmlContent += `<h2>${item.question}</h2>`;
       htmlContent += `<p>${item.answer.replace(/(^|\n)[*]\s/gm, '\n• ')}</p>`;
       htmlContent += '<br/>';
+      subInfo.word_count += item.answer.split(' ').length;
+      subInfo.keyword_density +=
+        item.answer.toLowerCase().split(data.keyword.toLowerCase()).length - 1;
     });
   }
 
@@ -60,6 +87,9 @@ function makeHtmlContent(data) {
       htmlContent += `<h2>${item.question}</h2>`;
       htmlContent += `<p>${item.answer.replace(/(^|\n)[*]\s/gm, '\n• ')}</p>`;
       htmlContent += '<br/>';
+      subInfo.word_count += item.answer.split(' ').length;
+      subInfo.keyword_density +=
+        item.answer.toLowerCase().split(data.keyword.toLowerCase()).length - 1;
     });
   }
 
@@ -67,10 +97,20 @@ function makeHtmlContent(data) {
     htmlContent += `<h2>Conclusion</h2>`;
     htmlContent += `<h4>${data.conclusion_paragraph}</h4> `;
     htmlContent += '<br/>';
+    subInfo.word_count += data.conclusion_paragraph.split(' ').length;
+    subInfo.keyword_density +=
+      data.conclusion_paragraph.toLowerCase().split(data.keyword.toLowerCase())
+        .length - 1;
   }
   //replaces any *
   // console.log(htmlContent);
   //https://regex101.com/
+
+  subInfo.keyword_density = +(
+    (subInfo.keyword_density / subInfo.word_count) *
+    100
+  ).toFixed(2);
+  setSubInfo({ ...subInfo });
   return htmlContent;
 }
 
@@ -83,6 +123,11 @@ function DetailedArticle() {
   const [value, setValue] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [savingData, setSavingData] = useState(false);
+  const [subInfo, setSubInfo] = useState({
+    word_count: 0,
+    keyword_density: 0,
+    grade: 0,
+  });
 
   useEffect(() => {
     const fun = async () => {
@@ -95,8 +140,9 @@ function DetailedArticle() {
   }, [id]);
 
   useEffect(() => {
+    console.log(articleData);
     if (articleData) {
-      let value = makeHtmlContent(articleData);
+      let value = makeHtmlContent(articleData, setSubInfo);
       setArticleFormated(value);
       setValue(articleData.html_content ? articleData.html_content : value);
     }
@@ -174,9 +220,25 @@ function DetailedArticle() {
               articleFormated={articleFormated}
               savingData={savingData}
               instantSaveData={saveDataHandler}
+              setSubInfo={setSubInfo}
             />
           </div>
         )}
+        <div className="flex flex-col gap-5 p-4 bg-white shadow-lg min-w-[200px] max-w-[100px] rounded-lg justify-center">
+          <div className="text-md w-full bg-primary-700 rounded-lg shadow-lg p-2 py-4 text-white text-center">
+            <h4 className="!font-bold">Word Count</h4>
+            <span>{subInfo.word_count}</span>
+          </div>
+          <div className="text-md w-full bg-primary-700 rounded-lg shadow-lg p-2 py-4 text-white text-center">
+            <h4 className="!font-bold">Readability Score</h4>
+            <span>{subInfo.grade}</span>
+          </div>
+          <div className="text-md w-full bg-primary-700 rounded-lg shadow-lg p-2 py-4 text-white text-center">
+            <h4 className="!font-bold">Keyword Density</h4>
+            <span>{subInfo.keyword_density}%</span>
+          </div>
+        </div>
+
         <Publisher
           isOpen={isOpen}
           onClose={onClose}

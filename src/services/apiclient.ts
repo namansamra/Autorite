@@ -46,13 +46,12 @@ api.interceptors.response.use(
     if (error && error.response) {
       const { status, data } = error.response;
       switch (status) {
-        case 400:
-          // if (data && data.hasOwnProperty('message')) {
-          //   if (data.message === 'Token Expired') {
-          //     window.location.replace('/login');
-          //   }
-          // }
-          handleLogout();
+        case 401:
+          if (data && data.hasOwnProperty('message')) {
+            if (data.message === 'Token Expired') {
+              handleLogout();
+            }
+          }
           break;
 
         default:

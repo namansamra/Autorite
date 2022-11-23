@@ -13,6 +13,8 @@ import {
   SEND_VERIFICATION_EMAIL,
   SAVE_ARTICLE,
   PUBLISH_ARTICLE,
+  GET_PLANS,
+  BUY_PLAN,
 } from './constants';
 
 export const userLogin = (body: any) => api.post(USER_LOGIN, body);
@@ -37,3 +39,5 @@ export const sendVerificationEmail = () => api.post(SEND_VERIFICATION_EMAIL);
 
 export const saveArticle = (body: any) => api.patch(SAVE_ARTICLE, body);
 export const publishArticle = (body: any) => api.post(PUBLISH_ARTICLE, body);
+export const getPlans = () => api.get(GET_PLANS);
+export const buyPlan = (body: any) => api.post(BUY_PLAN, body);

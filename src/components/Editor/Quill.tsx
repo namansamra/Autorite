@@ -151,6 +151,7 @@ function QuillEditor({
   articleFormated = '',
   savingData = false,
   instantSaveData = (val: any) => {},
+  setSubInfo = (val: any) => {},
 }) {
   const ref = useRef();
   const [loading, setLoading] = useState(true);
@@ -219,6 +220,18 @@ function QuillEditor({
           ref={ref as React.MutableRefObject<any>}
           onChange={(value) => {
             setValue(value);
+            const subInfo = {
+              word_count: 0,
+              keyword_density: 0,
+              grade: 0,
+            };
+            let p = value.replaceAll(/(<([^>]+)>)/gi, '');
+            subInfo.word_count += p.split(' ').length;
+            subInfo.keyword_density = +(
+              ((p.split(articleData.keyword).length - 1) / subInfo.word_count) *
+              100
+            ).toFixed(2);
+            setSubInfo(subInfo);
             if (isAutoSave) {
               saveEditorDataDebounce(value);
             }
