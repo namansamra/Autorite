@@ -14,3 +14,4 @@ export const SAVE_ARTICLE = 'article/save';
 export const PUBLISH_ARTICLE = 'wordpress/publish';
 export const GET_PLANS = 'subscription/plans';
 export const BUY_PLAN = 'subscription/create-session';
+export const PAYMENT_STATUS = 'subscription/session/';

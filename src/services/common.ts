@@ -15,6 +15,7 @@ import {
   PUBLISH_ARTICLE,
   GET_PLANS,
   BUY_PLAN,
+  PAYMENT_STATUS,
 } from './constants';
 
 export const userLogin = (body: any) => api.post(USER_LOGIN, body);
@@ -41,3 +42,5 @@ export const saveArticle = (body: any) => api.patch(SAVE_ARTICLE, body);
 export const publishArticle = (body: any) => api.post(PUBLISH_ARTICLE, body);
 export const getPlans = () => api.get(GET_PLANS);
 export const buyPlan = (body: any) => api.post(BUY_PLAN, body);
+export const getPaymentStatus = (id: string | number) =>
+  api.get(`${PAYMENT_STATUS}${id}`);

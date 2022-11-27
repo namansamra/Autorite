@@ -1,5 +1,11 @@
 import { useGlobalStore } from '@/store/store';
-import { Button, Input, useDisclosure } from '@chakra-ui/react';
+import {
+  Button,
+  Input,
+  Progress,
+  Spinner,
+  useDisclosure,
+} from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { BsWordpress } from 'react-icons/bs';
 import { TbPlugConnected } from 'react-icons/tb';
@@ -19,10 +25,17 @@ import CustomFormError from '@/components/CustomFormError/CustomFormError';
 import { BsFillCheckCircleFill } from 'react-icons/bs';
 import { CgMenuRound, CgProfile } from 'react-icons/cg';
 import { SiQuantconnect } from 'react-icons/si';
-import { buyPlan, connectWordpress, getPlans } from '@/services/common';
+import {
+  buyPlan,
+  connectWordpress,
+  getPaymentStatus,
+  getPlans,
+} from '@/services/common';
 import { GrCurrency } from 'react-icons/gr';
 import CustomToast from '@/components/Toast/Toast';
-import { api } from '@/services/apiclient';
+import { useSimplePolling } from '@/hooks/usePollings';
+import { AiOutlineCloseCircle } from 'react-icons/ai';
+import { BsCheckCircle } from 'react-icons/bs';
 function MyAccount() {
   const [userInfo, wordPressInfo] = useGlobalStore((state) => [
     state.appState.userInfo,
@@ -31,7 +44,9 @@ function MyAccount() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [step, setStep] = useState(0);
   const [wordpressStatus, setWordpressStatus] = useState('not-connected');
-  const [plans, setPlans] = useState([]);
+  const [plansInfo, setPlansInfo] = useState<any>(null);
+  const [paymentSessionId, setPaymentSessionId] = useState('');
+  const [verifyingPayment, setVerifyingPayment] = useState('pending');
   const handleConnectWordpress = async (values) => {
     try {
       await connectWordpress(values);
@@ -44,6 +59,46 @@ function MyAccount() {
       }
     }
   };
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
+
+  const { startPolling, stopPolling } = useSimplePolling(
+    async () => {
+      const { data } = await getPaymentStatus(paymentSessionId);
+
+      switch (data?.subscriptionInfo?.status) {
+        case 'created':
+          setShowPaymentModal(true);
+          setVerifyingPayment('pending');
+          break;
+        case 'completed':
+          stopPolling();
+          setTimeout(() => {
+            setShowPaymentModal(false);
+          }, 10000);
+          setVerifyingPayment('completed');
+          break;
+
+        case 'failed':
+          stopPolling();
+          setTimeout(() => {
+            setShowPaymentModal(false);
+          }, 10000);
+          setVerifyingPayment('failed');
+          break;
+
+        default:
+          stopPolling();
+          setTimeout(() => {
+            setShowPaymentModal(false);
+          }, 10000);
+          setVerifyingPayment('');
+          break;
+      }
+    },
+    10,
+    20
+  );
 
   const initialValues = {
     domain: '',
@@ -238,44 +293,112 @@ function MyAccount() {
 
       case 2:
         return (
-          <div className="flex gap-4 p-5 justify-evenly w-full flex-wrap items-center">
-            {plans.map((plan: any) => {
-              return (
-                <div
-                  className="flex flex-col shadow-md rounded-md p-5 bg-primary-50 min-h-[400px] min-w-[300px] justify-between items-center"
-                  key={plan.id}
-                >
-                  <h1 className="font-bold text-3xl">{plan.plan_name}</h1>
-                  <p>{plan.plan_type || '-'}</p>
-                  <div className="text-lg">
-                    Wallet Credits: <b>{plan.wallet_credits}</b>
-                  </div>
-                  <div className="text-lg">
-                    Validity: <b>{plan.validity} days</b>
-                  </div>
-                  {!plan.currency ? (
-                    <h2>Free</h2>
-                  ) : (
-                    <h2>
-                      {plan.price} {plan.currency}
-                    </h2>
-                  )}
-                  {!plan.currency ? (
-                    <Button variant={'primary'} isDisabled={true} w="100%">
-                      Activated
-                    </Button>
-                  ) : (
-                    <Button
-                      variant={'primary'}
-                      onClick={() => displayRazorpay(plan.plan_id)}
-                      w="100%"
-                    >
-                      Buy Now
-                    </Button>
-                  )}
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col p-6 w-full max-w-lg gap-2 rounded-lg shadow-lg mx-5 border-2 border-grey-200">
+              <h2>Current Plan Info:</h2>
+              <div className="flex flex-col gap-2 text-grey-600">
+                <div className="flex items-center justify-between">
+                  <span className="text-grey-500">Plan Name</span>
+                  <span className="font-bold text-grey-800">
+                    {plansInfo?.userPlanInfo?.plan_name}
+                  </span>
                 </div>
-              );
-            })}
+                <div className="flex items-center justify-between">
+                  <span className="text-grey-500">Credits Remaining</span>
+                  <span className="font-bold text-grey-800">
+                    {plansInfo?.userPlanInfo?.credits}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-grey-500">Expiry On</span>
+                  <span className="font-bold text-grey-800">
+                    {new Date(
+                      plansInfo?.userPlanInfo?.expiration_at
+                    ).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <Modal
+              isOpen={showPaymentModal}
+              onClose={() => {
+                setShowPaymentModal(false);
+              }}
+            >
+              <ModalOverlay />
+              <ModalContent p="20px">
+                <ModalHeader className="text-center">
+                  Processing You Payment
+                </ModalHeader>
+                <ModalBody className="flex flex-col gap-2 justify-center items-center">
+                  {verifyingPayment == 'pending' ? (
+                    <Spinner
+                      thickness="4px"
+                      speed="0.65s"
+                      emptyColor="gray.200"
+                      size="xl"
+                      className="text-primary-500"
+                    />
+                  ) : verifyingPayment == 'completed' ? (
+                    <div className="text-grey-600 w-full text-center flex flex-col items-center justify-center gap-4">
+                      Payment Successfully Completed!! <br />
+                      <BsCheckCircle className="text-primary-600 h-[100px] w-[100px]" />
+                    </div>
+                  ) : (
+                    <div className="text-grey-600 w-full text-center flex flex-col items-center justify-center gap-4">
+                      Failed!! Please try again
+                      <AiOutlineCloseCircle className="text-status-closed h-[100px] w-[100px]" />
+                    </div>
+                  )}
+                </ModalBody>
+              </ModalContent>
+            </Modal>
+            <div className="flex gap-4 p-5 justify-evenly w-full flex-wrap items-center">
+              {plansInfo?.plans?.map((plan: any) => {
+                return (
+                  <div
+                    className="flex flex-col shadow-md rounded-md p-5 bg-primary-50 min-h-[400px] min-w-[300px] justify-between items-center"
+                    key={plan.id}
+                  >
+                    <h1 className="font-bold text-3xl">{plan.plan_name}</h1>
+                    <p>{plan.plan_type || '-'}</p>
+                    <div className="text-lg">
+                      Wallet Credits: <b>{plan.wallet_credits}</b>
+                    </div>
+                    <div className="text-lg">
+                      Validity: <b>{plan.validity} days</b>
+                    </div>
+                    {!plan.currency ? (
+                      <h2>Free</h2>
+                    ) : (
+                      <h2>
+                        {plan.price} {plan.currency}
+                      </h2>
+                    )}
+
+                    {plan?.plan_name == 'Trial' ? (
+                      <Button variant={'primary'} isDisabled={true} w="100%">
+                        Activate and Expire Automatically
+                      </Button>
+                    ) : plan?.plan_name ==
+                      plansInfo?.userPlanInfo?.plan_name ? (
+                      <Button variant={'primary'} isDisabled={true} w="100%">
+                        Activated
+                      </Button>
+                    ) : (
+                      <Button
+                        variant={'primary'}
+                        onClick={() => displayRazorpay(plan.plan_id)}
+                        w="100%"
+                      >
+                        Buy Now
+                      </Button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         );
 
@@ -317,15 +440,17 @@ function MyAccount() {
       return;
     }
 
-    const { subscription_id } = result.data?.subscriptionInfo;
-
+    const { subscription_id, session_id, ...other } =
+      result.data?.subscriptionInfo;
+    setPaymentSessionId(session_id);
     const options = {
       key: 'rzp_test_dqxSieRTxYtO1b', // Enter the Key ID generated from the Dashboard
       name: userInfo?.name,
       description: 'Test Transaction',
       subscription_id: subscription_id,
       handler: async function (response) {
-        console.log(response);
+        setShowPaymentModal(true);
+        startPolling();
       },
       prefill: {
         name: userInfo?.name,
@@ -345,7 +470,8 @@ function MyAccount() {
     const fun = async () => {
       try {
         const plan = await getPlans();
-        setPlans(plan.data);
+        console.log(plan.data);
+        setPlansInfo(plan.data as any);
       } catch (error) {
         console.log(error);
       }
