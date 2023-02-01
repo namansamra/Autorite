@@ -488,7 +488,7 @@ function MyAccount() {
             {actions.map((action, i) => (
               <div
                 key={action.title}
-                className={` flex items-center p-2.5 text-md font-semibold text-grey-600 cursor-pointer rounded-sm ${
+                className={` flex items-center p-3 text-md font-semibold text-grey-600 cursor-pointer rounded-sm ${
                   step == action.step ? 'bg-primary-50' : ''
                 }`}
                 onClick={() => setStep(action.step)}
